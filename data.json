@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-25T01:39:03.344577+00:00",
+  "updated_at": "2026-07-25T01:54:00.752935+00:00",
   "rows": [
     {
       "name": "원/달러 환율",
@@ -15,32 +15,32 @@
     },
     {
       "name": "나스닥 (QQQ)",
-      "label": "데이터 없음",
+      "label": "-1.12%",
       "weight": 0.5,
-      "contrib": null
+      "contrib": -0.5
     },
     {
       "name": "반도체ETF (SOXX)",
-      "label": "데이터 없음",
+      "label": "-4.40%",
       "weight": 2.0,
-      "contrib": null
+      "contrib": -2.0
     },
     {
       "name": "WTI 유가",
-      "label": "데이터 없음",
+      "label": "-16.96%(전월비)",
       "weight": 0.5,
-      "contrib": null
+      "contrib": 0.5
     },
     {
       "name": "미국채 10년물",
-      "label": "데이터 없음",
+      "label": "4.47% (전월 4.48%)",
       "weight": 1.0,
-      "contrib": null
+      "contrib": 1.0
     }
   ],
-  "score": 2.0,
-  "normalized_score": 1.0,
+  "score": 1.0,
+  "normalized_score": 0.16666666666666666,
   "signal": "상승 우세",
-  "top_factor": "원/달러 환율",
+  "top_factor": "반도체ETF (SOXX)",
   "reason": null
 }
