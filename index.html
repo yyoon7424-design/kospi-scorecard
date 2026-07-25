@@ -37,6 +37,10 @@
   .disclaimer { font-size: 11px; color: #8A8A82; margin-top: 8px; }
   h2 { font-size: 13px; margin: 0 0 10px 0; color: #6B6A63; text-transform: uppercase; letter-spacing: .03em; }
   .status { font-size: 13px; color: #6B6A63; }
+  .chart-wrap { position: relative; height: 200px; }
+  .chart-wrap.small { height: 160px; }
+  .section-text { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+  .badge-note { display: inline-block; font-size: 11px; color: #8A8A82; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -55,6 +59,11 @@
     <div class="disclaimer">이 스코어는 해외 요인(환율·미국증시·원자재·금리) 기반 참고 자료이며, 국내 수급이나 코스피 자체 모멘텀은 반영하지 않습니다. 투자 판단은 본인 책임하에 결정하세요.</div>
   </div>
 
+  <div class="card" id="chartCard" style="display:none">
+    <h2>팩터별 기여점수</h2>
+    <div class="chart-wrap"><canvas id="factorChart"></canvas></div>
+  </div>
+
   <div class="card" id="tableCard" style="display:none">
     <h2>팩터 상세</h2>
     <table>
@@ -62,8 +71,11 @@
       <tbody id="tableBody"></tbody>
     </table>
   </div>
+
+  <div id="expandedWrap"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
 <script>
 async function main() {
   let data;
@@ -92,6 +104,7 @@ async function main() {
   document.getElementById("reasonText").textContent =
     data.reason ? `[${data.top_factor}] ${data.reason}` : "이유 분석 데이터 없음";
 
+  // table
   const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
   data.rows.forEach(r => {
@@ -102,6 +115,83 @@ async function main() {
     tbody.appendChild(tr);
   });
   document.getElementById("tableCard").style.display = "block";
+
+  // chart
+  document.getElementById("chartCard").style.display = "block";
+  const chartRows = data.rows.filter(r => r.contrib !== null);
+  new Chart(document.getElementById("factorChart").getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: chartRows.map(r => r.name),
+      datasets: [{
+        data: chartRows.map(r => r.contrib),
+        backgroundColor: chartRows.map(r => r.contrib >= 0 ? "#1E8E5A" : "#C6613F"),
+      }]
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { title: { display: true, text: "기여점수" } } }
+    }
+  });
+
+  // expanded sections (격일)
+  if (data.expanded) {
+    const wrap = document.getElementById("expandedWrap");
+    const ex = data.expanded;
+
+    if (ex.semiconductor) {
+      const semi = ex.semiconductor;
+      const validStocks = semi.stocks.filter(s => s.change !== null && s.change !== undefined);
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h2>반도체 심층분석</h2>
+        <span class="badge-note">격일 갱신</span>
+        <div class="chart-wrap small"><canvas id="semiChart"></canvas></div>
+        <p class="interp">${semi.reason ? semi.reason : "이유 분석 데이터 없음"}</p>
+      `;
+      wrap.appendChild(card);
+      if (validStocks.length > 0) {
+        new Chart(card.querySelector("#semiChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: validStocks.map(s => s.symbol),
+            datasets: [{
+              data: validStocks.map(s => s.change),
+              backgroundColor: validStocks.map(s => s.change >= 0 ? "#1E8E5A" : "#C6613F"),
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { title: { display: true, text: "등락률(%)" } } }
+          }
+        });
+      }
+    }
+
+    const textSections = [
+      { key: "geopolitics", title: "지정학 리스크" },
+      { key: "global_markets", title: "글로벌 증시 동향" },
+      { key: "monetary_policy", title: "주요국 통화정책·경제지표" },
+    ];
+    textSections.forEach(sec => {
+      if (ex[sec.key]) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h2>${sec.title}</h2>
+          <span class="badge-note">격일 갱신</span>
+          <p class="section-text">${ex[sec.key]}</p>
+        `;
+        wrap.appendChild(card);
+      }
+    });
+  }
 }
 main();
 </script>

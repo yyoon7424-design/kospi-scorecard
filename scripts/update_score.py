@@ -26,6 +26,10 @@ FACTORS = [
 
 SYMBOL_MAP = {"반도체ETF (SOXX)": "SOXX", "S&P500 (SPY)": "SPY", "나스닥 (QQQ)": "QQQ"}
 
+SEMI_STOCKS = ["NVDA", "TSM", "INTC", "AMD", "MU"]
+
+AV_DELAY_SECONDS = 13
+
 
 def av_call(params):
     params = dict(params)
@@ -135,11 +139,69 @@ def fetch_news_summary(symbol, factor_name):
     return call_claude(prompt)
 
 
-def main():
-    # Alpha Vantage free tier allows 5 requests/minute, so we pace calls out
-    # with a delay to stay well under that limit.
-    AV_DELAY_SECONDS = 13
+def call_claude_web_search(prompt, max_uses=3, max_tokens=500):
+    """Claude가 직접 웹검색해서 답을 만드는 서버사이드 도구 호출.
+    검색은 API 서버에서 자동 수행되며, 우리는 최종 텍스트만 추출한다."""
+    body = json.dumps({
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+        "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": max_uses}],
+    }).encode()
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=body,
+        headers={
+            "x-api-key": ANTHROPIC_KEY,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            result = json.loads(resp.read().decode())
+        texts = [b["text"] for b in result.get("content", []) if b.get("type") == "text"]
+        combined = "\n".join(t.strip() for t in texts if t.strip())
+        return combined or None
+    except Exception as e:
+        print("Claude web search exception:", e)
+        return None
 
+
+def fetch_semiconductor_section():
+    stocks = []
+    for symbol in SEMI_STOCKS:
+        q = fetch_quote(symbol)
+        time.sleep(AV_DELAY_SECONDS)
+        stocks.append({"symbol": symbol, "label": q["label"] if q else "데이터 없음", "change": q["change"] if q else None})
+    reason = fetch_news_summary("SOXX,NVDA", "반도체 섹터")
+    return {"stocks": stocks, "reason": reason}
+
+
+def fetch_expanded_sections():
+    """격일로만 실행되는 심층 섹션 (웹검색 기반, 비용 발생)."""
+    geopolitics = call_claude_web_search(
+        "오늘 기준 글로벌 증시에 영향을 줄 수 있는 주요 지정학 리스크(중동 정세, 미중관계, "
+        "기타 주요 분쟁·외교 이슈)를 검색해서 한국어로 3~4문장으로 요약해줘. 사실 위주로, 과장 없이."
+    )
+    time.sleep(5)
+    global_markets = call_claude_web_search(
+        "오늘 아시아·유럽 주요 증시(닛케이, 상해종합, 항셍, 유로스톡스 등)의 마감 흐름을 검색해서 "
+        "한국어로 3~4문장으로 요약해줘."
+    )
+    time.sleep(5)
+    monetary_policy = call_claude_web_search(
+        "최근 미 연준(Fed)의 금리 정책 스탠스, 미국의 최신 고용·물가지표, 중국 경기 상황을 검색해서 "
+        "한국어로 3~4문장으로 요약해줘."
+    )
+    return {
+        "geopolitics": geopolitics,
+        "global_markets": global_markets,
+        "monetary_policy": monetary_policy,
+    }
+
+
+def main():
     results = {}
     results["fx"] = fetch_fx()
     time.sleep(AV_DELAY_SECONDS)
@@ -186,6 +248,16 @@ def main():
         if symbol:
             reason = fetch_news_summary(symbol, top_factor_name)
 
+    # 격일로만 심층 섹션 실행 (연중 일수 기준 짝/홀 판정 - 상태 저장 없이 결정적으로 계산)
+    day_of_year = datetime.now(timezone.utc).timetuple().tm_yday
+    is_expanded_day = (day_of_year % 2 == 0)
+
+    expanded = None
+    if is_expanded_day:
+        semiconductor = fetch_semiconductor_section()
+        extra = fetch_expanded_sections()
+        expanded = {"semiconductor": semiconductor, **extra}
+
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "rows": rows,
@@ -194,6 +266,7 @@ def main():
         "signal": signal,
         "top_factor": top_factor_name,
         "reason": reason,
+        "expanded": expanded,
     }
 
     with open("data.json", "w", encoding="utf-8") as fp:
