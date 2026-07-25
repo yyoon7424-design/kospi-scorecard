@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-07-25T01:23:06.017232+00:00",
+  "updated_at": "2026-07-25T01:39:03.344577+00:00",
   "rows": [
     {
       "name": "원/달러 환율",
-      "label": "데이터 없음",
+      "label": "-1.06%",
       "weight": 1.0,
-      "contrib": null
+      "contrib": 1.0
     },
     {
       "name": "S&P500 (SPY)",
-      "label": "데이터 없음",
+      "label": "+0.10%",
       "weight": 1.0,
-      "contrib": null
+      "contrib": 1.0
     },
     {
       "name": "나스닥 (QQQ)",
@@ -38,9 +38,9 @@
       "contrib": null
     }
   ],
-  "score": 0.0,
-  "normalized_score": 0,
-  "signal": "중립",
-  "top_factor": null,
+  "score": 2.0,
+  "normalized_score": 1.0,
+  "signal": "상승 우세",
+  "top_factor": "원/달러 환율",
   "reason": null
 }
