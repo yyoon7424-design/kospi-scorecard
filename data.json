@@ -1,9 +1,46 @@
 {
-  "updated_at": null,
-  "rows": [],
-  "score": 0,
+  "updated_at": "2026-07-25T01:23:06.017232+00:00",
+  "rows": [
+    {
+      "name": "원/달러 환율",
+      "label": "데이터 없음",
+      "weight": 1.0,
+      "contrib": null
+    },
+    {
+      "name": "S&P500 (SPY)",
+      "label": "데이터 없음",
+      "weight": 1.0,
+      "contrib": null
+    },
+    {
+      "name": "나스닥 (QQQ)",
+      "label": "데이터 없음",
+      "weight": 0.5,
+      "contrib": null
+    },
+    {
+      "name": "반도체ETF (SOXX)",
+      "label": "데이터 없음",
+      "weight": 2.0,
+      "contrib": null
+    },
+    {
+      "name": "WTI 유가",
+      "label": "데이터 없음",
+      "weight": 0.5,
+      "contrib": null
+    },
+    {
+      "name": "미국채 10년물",
+      "label": "데이터 없음",
+      "weight": 1.0,
+      "contrib": null
+    }
+  ],
+  "score": 0.0,
   "normalized_score": 0,
-  "signal": "대기중",
+  "signal": "중립",
   "top_factor": null,
-  "reason": "첫 자동 실행 전입니다. GitHub Actions가 실행되면 여기에 데이터가 채워집니다."
+  "reason": null
 }
