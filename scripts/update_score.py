@@ -5,6 +5,7 @@ GitHub Actions에서 매일 자동 실행됨. 표준 라이브러리만 사용 (
 """
 import json
 import os
+import time
 import urllib.request
 import urllib.parse
 from datetime import datetime, timezone
@@ -135,14 +136,23 @@ def fetch_news_summary(symbol, factor_name):
 
 
 def main():
-    results = {
-        "fx": fetch_fx(),
-        "spy": fetch_quote("SPY"),
-        "qqq": fetch_quote("QQQ"),
-        "soxx": fetch_quote("SOXX"),
-        "wti": fetch_wti(),
-        "tnote": fetch_treasury(),
-    }
+    # Alpha Vantage free tier allows 5 requests/minute, so we pace calls out
+    # with a delay to stay well under that limit.
+    AV_DELAY_SECONDS = 13
+
+    results = {}
+    results["fx"] = fetch_fx()
+    time.sleep(AV_DELAY_SECONDS)
+    results["spy"] = fetch_quote("SPY")
+    time.sleep(AV_DELAY_SECONDS)
+    results["qqq"] = fetch_quote("QQQ")
+    time.sleep(AV_DELAY_SECONDS)
+    results["soxx"] = fetch_quote("SOXX")
+    time.sleep(AV_DELAY_SECONDS)
+    results["wti"] = fetch_wti()
+    time.sleep(AV_DELAY_SECONDS)
+    results["tnote"] = fetch_treasury()
+    time.sleep(AV_DELAY_SECONDS)
 
     total_weight = 0.0
     score = 0.0
