@@ -59,6 +59,11 @@
     <div class="disclaimer">이 스코어는 해외 요인(환율·미국증시·원자재·금리) 기반 참고 자료이며, 국내 수급이나 코스피 자체 모멘텀은 반영하지 않습니다. 투자 판단은 본인 책임하에 결정하세요.</div>
   </div>
 
+  <div class="card" id="flowCard" style="display:none">
+    <h2>국내 수급 동향 (외국인·기관·개인)</h2>
+    <p class="section-text" id="flowText"></p>
+  </div>
+
   <div class="card" id="chartCard" style="display:none">
     <h2>팩터별 기여점수</h2>
     <div class="chart-wrap"><canvas id="factorChart"></canvas></div>
@@ -69,6 +74,15 @@
     <table>
       <thead><tr><th>팩터</th><th class="num">변동률</th><th class="num">기여점수</th></tr></thead>
       <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="card" id="trackCard" style="display:none">
+    <h2>적중률 추적</h2>
+    <p class="section-text" id="trackSummary"></p>
+    <table>
+      <thead><tr><th>날짜</th><th>신호</th><th class="num">실제 등락률</th><th>적중</th></tr></thead>
+      <tbody id="trackBody"></tbody>
     </table>
   </div>
 
@@ -104,6 +118,12 @@ async function main() {
   document.getElementById("reasonText").textContent =
     data.reason ? `[${data.top_factor}] ${data.reason}` : "이유 분석 데이터 없음";
 
+  // foreign / institutional / individual flow (daily)
+  if (data.foreign_flow) {
+    document.getElementById("flowCard").style.display = "block";
+    document.getElementById("flowText").textContent = data.foreign_flow;
+  }
+
   // table
   const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
@@ -136,6 +156,29 @@ async function main() {
       scales: { x: { title: { display: true, text: "기여점수" } } }
     }
   });
+
+  // track record (적중률 추적)
+  if (data.track_record) {
+    const tr = data.track_record;
+    document.getElementById("trackCard").style.display = "block";
+    if (tr.accuracy === null || tr.graded_count === 0) {
+      document.getElementById("trackSummary").textContent =
+        "아직 검증된 기록이 부족합니다. 며칠 더 쌓이면 적중률이 표시됩니다.";
+    } else {
+      document.getElementById("trackSummary").textContent =
+        `최근 ${tr.graded_count}건 중 적중률 ${(tr.accuracy * 100).toFixed(0)}% (중립 신호는 채점 제외)`;
+    }
+    const trackBody = document.getElementById("trackBody");
+    trackBody.innerHTML = "";
+    (tr.recent || []).slice().reverse().forEach(h => {
+      const row = document.createElement("tr");
+      const actualText = h.actual_change_pct === null || h.actual_change_pct === undefined
+        ? "대기중" : `${h.actual_change_pct > 0 ? "+" : ""}${h.actual_change_pct.toFixed(2)}%`;
+      const matchText = h.matched === null || h.matched === undefined ? "-" : (h.matched ? "✅" : "❌");
+      row.innerHTML = `<td>${h.date}</td><td>${h.signal}</td><td class="num">${actualText}</td><td>${matchText}</td>`;
+      trackBody.appendChild(row);
+    });
+  }
 
   // expanded sections (격일)
   if (data.expanded) {
