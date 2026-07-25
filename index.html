@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>코스피 아침 스코어카드</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px;
+    background: #FCFCFB; color: #2E2C27;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px 0; }
+  .date { color: #6B6A63; font-size: 13px; margin-bottom: 20px; }
+  .card {
+    background: #fff; border: 1px solid #E4E3DC; border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .signal-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .signal-badge {
+    font-size: 18px; font-weight: 700; padding: 8px 18px; border-radius: 999px;
+    color: #fff; white-space: nowrap;
+  }
+  .signal-up { background: #1E8E5A; }
+  .signal-down { background: #C6613F; }
+  .signal-neutral { background: #8A8A82; }
+  .score-num { font-size: 14px; color: #6B6A63; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #E4E3DC; }
+  th { color: #6B6A63; font-weight: 500; font-size: 11px; text-transform: uppercase; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: #1E8E5A; }
+  .neg { color: #C6613F; }
+  .interp { font-size: 14px; line-height: 1.6; }
+  .disclaimer { font-size: 11px; color: #8A8A82; margin-top: 8px; }
+  h2 { font-size: 13px; margin: 0 0 10px 0; color: #6B6A63; text-transform: uppercase; letter-spacing: .03em; }
+  .status { font-size: 13px; color: #6B6A63; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>코스피 아침 스코어카드</h1>
+  <div class="date" id="dateLine">불러오는 중...</div>
+
+  <div class="card" id="statusCard"><div class="status" id="statusText">데이터를 불러오는 중입니다...</div></div>
+
+  <div class="card" id="signalCard" style="display:none">
+    <div class="signal-row">
+      <span class="signal-badge" id="signalBadge">-</span>
+      <span class="score-num" id="scoreNum">-</span>
+    </div>
+    <p class="interp" id="reasonText"></p>
+    <div class="disclaimer">이 스코어는 해외 요인(환율·미국증시·원자재·금리) 기반 참고 자료이며, 국내 수급이나 코스피 자체 모멘텀은 반영하지 않습니다. 투자 판단은 본인 책임하에 결정하세요.</div>
+  </div>
+
+  <div class="card" id="tableCard" style="display:none">
+    <h2>팩터 상세</h2>
+    <table>
+      <thead><tr><th>팩터</th><th class="num">변동률</th><th class="num">기여점수</th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function main() {
+  let data;
+  try {
+    const res = await fetch("./data.json?t=" + Date.now());
+    data = await res.json();
+  } catch (e) {
+    document.getElementById("statusText").textContent = "data.json을 아직 불러올 수 없습니다. 첫 자동 실행 전이거나 오류가 있을 수 있습니다.";
+    return;
+  }
+
+  const d = new Date(data.updated_at);
+  document.getElementById("dateLine").textContent =
+    "마지막 갱신: " + d.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+
+  document.getElementById("statusCard").style.display = "none";
+  document.getElementById("signalCard").style.display = "block";
+
+  const badge = document.getElementById("signalBadge");
+  badge.textContent = data.signal;
+  badge.className = "signal-badge " +
+    (data.signal === "상승 우세" ? "signal-up" : data.signal === "하락 우세" ? "signal-down" : "signal-neutral");
+  document.getElementById("scoreNum").textContent =
+    "정규화 점수 " + (data.normalized_score >= 0 ? "+" : "") + data.normalized_score.toFixed(2);
+
+  document.getElementById("reasonText").textContent =
+    data.reason ? `[${data.top_factor}] ${data.reason}` : "이유 분석 데이터 없음";
+
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+  data.rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const contribText = r.contrib === null ? "-" : (r.contrib > 0 ? `+${r.contrib.toFixed(2)}` : r.contrib.toFixed(2));
+    const cls = r.contrib === null ? "" : (r.contrib > 0 ? "pos" : (r.contrib < 0 ? "neg" : ""));
+    tr.innerHTML = `<td>${r.name}</td><td class="num">${r.label}</td><td class="num ${cls}">${contribText}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("tableCard").style.display = "block";
+}
+main();
+</script>
+</body>
+</html>

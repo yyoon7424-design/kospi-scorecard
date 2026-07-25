@@ -1,0 +1,9 @@
+{
+  "updated_at": null,
+  "rows": [],
+  "score": 0,
+  "normalized_score": 0,
+  "signal": "대기중",
+  "top_factor": null,
+  "reason": "첫 자동 실행 전입니다. GitHub Actions가 실행되면 여기에 데이터가 채워집니다."
+}
