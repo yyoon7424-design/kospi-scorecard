@@ -1,29 +1,29 @@
 {
-  "updated_at": "2026-08-05T23:49:50.288065+00:00",
+  "updated_at": "2026-08-07T01:41:10.010550+00:00",
   "rows": [
     {
       "name": "원/달러 환율",
-      "label": "-0.54%",
+      "label": "+0.13%",
       "weight": 1.0,
-      "contrib": 1.0
+      "contrib": -1.0
     },
     {
       "name": "S&P500 (SPY)",
-      "label": "-0.20%",
+      "label": "-0.16%",
       "weight": 1.0,
       "contrib": -1.0
     },
     {
       "name": "나스닥 (QQQ)",
-      "label": "-0.90%",
+      "label": "-0.37%",
       "weight": 0.5,
       "contrib": -0.5
     },
     {
       "name": "반도체ETF (SOXX)",
-      "label": "-2.12%",
+      "label": "+0.34%",
       "weight": 2.0,
-      "contrib": -2.0
+      "contrib": 2.0
     },
     {
       "name": "WTI 유가",
@@ -38,8 +38,8 @@
       "contrib": -1.0
     }
   ],
-  "score": -3.0,
-  "normalized_score": -0.5,
+  "score": -1.0,
+  "normalized_score": -0.16666666666666666,
   "signal": "하락 우세",
   "top_factor": "반도체ETF (SOXX)",
   "reason": null,
@@ -107,6 +107,13 @@
         "date": "2026-08-05",
         "signal": "하락 우세",
         "normalized_score": -0.5,
+        "actual_change_pct": null,
+        "matched": null
+      },
+      {
+        "date": "2026-08-07",
+        "signal": "하락 우세",
+        "normalized_score": -0.16666666666666666,
         "actual_change_pct": null,
         "matched": null
       }
