@@ -145,5 +145,12 @@
     "normalized_score": 0.0,
     "actual_change_pct": null,
     "matched": null
+  },
+  {
+    "date": "2026-08-24",
+    "signal": "하락 우세",
+    "normalized_score": -0.5,
+    "actual_change_pct": null,
+    "matched": null
   }
 ]
