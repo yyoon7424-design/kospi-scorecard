@@ -1,93 +1,52 @@
 {
-  "updated_at": "2026-09-23T01:05:18.115159+00:00",
+  "updated_at": "2026-09-24T00:58:56.010496+00:00",
   "rows": [
     {
       "name": "원/달러 환율",
-      "label": "데이터 없음",
+      "label": "+0.87%",
       "weight": 1.0,
-      "contrib": null
+      "contrib": -1.0
     },
     {
       "name": "S&P500 (SPY)",
-      "label": "데이터 없음",
+      "label": "-0.72%",
       "weight": 1.0,
-      "contrib": null
+      "contrib": -1.0
     },
     {
       "name": "나스닥 (QQQ)",
-      "label": "데이터 없음",
+      "label": "-0.84%",
       "weight": 0.5,
-      "contrib": null
+      "contrib": -0.5
     },
     {
       "name": "반도체ETF (SOXX)",
-      "label": "데이터 없음",
+      "label": "-1.23%",
       "weight": 2.0,
-      "contrib": null
+      "contrib": -2.0
     },
     {
       "name": "WTI 유가",
-      "label": "데이터 없음",
+      "label": "+4.28%(전월비)",
       "weight": 0.5,
-      "contrib": null
+      "contrib": -0.5
     },
     {
       "name": "미국채 10년물",
-      "label": "데이터 없음",
+      "label": "4.68% (전월 4.60%)",
       "weight": 1.0,
-      "contrib": null
+      "contrib": -1.0
     }
   ],
-  "score": 0.0,
-  "normalized_score": 0,
-  "signal": "중립",
-  "top_factor": null,
+  "score": -6.0,
+  "normalized_score": -1.0,
+  "signal": "하락 우세",
+  "top_factor": "반도체ETF (SOXX)",
   "reason": null,
   "foreign_flow": null,
-  "expanded": {
-    "semiconductor": {
-      "stocks": [
-        {
-          "symbol": "NVDA",
-          "label": "데이터 없음",
-          "change": null
-        },
-        {
-          "symbol": "TSM",
-          "label": "데이터 없음",
-          "change": null
-        },
-        {
-          "symbol": "INTC",
-          "label": "데이터 없음",
-          "change": null
-        },
-        {
-          "symbol": "AMD",
-          "label": "데이터 없음",
-          "change": null
-        },
-        {
-          "symbol": "MU",
-          "label": "데이터 없음",
-          "change": null
-        }
-      ],
-      "reason": null
-    },
-    "geopolitics": null,
-    "global_markets": null,
-    "monetary_policy": null
-  },
+  "expanded": null,
   "track_record": {
     "recent": [
-      {
-        "date": "2026-09-10",
-        "signal": "중립",
-        "normalized_score": 0.0,
-        "actual_change_pct": null,
-        "matched": null
-      },
       {
         "date": "2026-09-11",
         "signal": "하락 우세",
@@ -148,6 +107,13 @@
         "date": "2026-09-23",
         "signal": "중립",
         "normalized_score": 0,
+        "actual_change_pct": null,
+        "matched": null
+      },
+      {
+        "date": "2026-09-24",
+        "signal": "하락 우세",
+        "normalized_score": -1.0,
         "actual_change_pct": null,
         "matched": null
       }
