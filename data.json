@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22T01:06:12.395228+00:00",
+  "updated_at": "2026-10-23T01:07:57.579546+00:00",
   "rows": [
     {
       "name": "원/달러 환율",
@@ -9,51 +9,78 @@
     },
     {
       "name": "S&P500 (SPY)",
-      "label": "+0.53%",
+      "label": "-1.18%",
       "weight": 1.0,
-      "contrib": 1.0
+      "contrib": -1.0
     },
     {
       "name": "나스닥 (QQQ)",
-      "label": "+1.05%",
+      "label": "-2.86%",
       "weight": 0.5,
-      "contrib": 0.5
+      "contrib": -0.5
     },
     {
       "name": "반도체ETF (SOXX)",
-      "label": "+2.07%",
+      "label": "-6.79%",
       "weight": 2.0,
-      "contrib": 2.0
+      "contrib": -2.0
     },
     {
       "name": "WTI 유가",
-      "label": "데이터 없음",
+      "label": "+15.98%(전월비)",
       "weight": 0.5,
-      "contrib": null
+      "contrib": -0.5
     },
     {
       "name": "미국채 10년물",
-      "label": "데이터 없음",
+      "label": "4.99% (전월 4.68%)",
       "weight": 1.0,
-      "contrib": null
+      "contrib": -1.0
     }
   ],
-  "score": 2.5,
-  "normalized_score": 0.5555555555555556,
-  "signal": "상승 우세",
+  "score": -6.0,
+  "normalized_score": -1.0,
+  "signal": "하락 우세",
   "top_factor": "반도체ETF (SOXX)",
   "reason": null,
   "foreign_flow": null,
-  "expanded": null,
+  "expanded": {
+    "semiconductor": {
+      "stocks": [
+        {
+          "symbol": "NVDA",
+          "label": "-4.40%",
+          "change": -4.397
+        },
+        {
+          "symbol": "TSM",
+          "label": "-4.52%",
+          "change": -4.5243
+        },
+        {
+          "symbol": "INTC",
+          "label": "-8.04%",
+          "change": -8.0357
+        },
+        {
+          "symbol": "AMD",
+          "label": "-8.10%",
+          "change": -8.1036
+        },
+        {
+          "symbol": "MU",
+          "label": "-6.26%",
+          "change": -6.2583
+        }
+      ],
+      "reason": null
+    },
+    "geopolitics": null,
+    "global_markets": null,
+    "monetary_policy": null
+  },
   "track_record": {
     "recent": [
-      {
-        "date": "2026-10-09",
-        "signal": "하락 우세",
-        "normalized_score": -1.0,
-        "actual_change_pct": null,
-        "matched": null
-      },
       {
         "date": "2026-10-12",
         "signal": "하락 우세",
@@ -114,6 +141,13 @@
         "date": "2026-10-22",
         "signal": "상승 우세",
         "normalized_score": 0.5555555555555556,
+        "actual_change_pct": null,
+        "matched": null
+      },
+      {
+        "date": "2026-10-23",
+        "signal": "하락 우세",
+        "normalized_score": -1.0,
         "actual_change_pct": null,
         "matched": null
       }
